@@ -1,0 +1,91 @@
+name: Advanced go build, test, and scan reusable workflow
+on:
+  workflow_call:
+    inputs:
+      BINARY_NAME:
+        description: the output binary name that is expected
+        required: true
+        type: string
+      GO_VERSION:
+        default: 1.18
+        description: Version of go to use when compiling, testing, etc.
+        required: false
+        type: string
+
+    secrets:
+      SNYK_KEY:
+        required: false
+        description: Access key for authenticating with Snyk.io
+      SONAR_KEY:
+        required: false
+        description: Access key for authenticating with SonarCloud
+    outputs:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - OS: linux
+            ARCH: amd64
+          - OS: linux
+            ARCH: 386
+          - OS: darwin
+            ARCH: amd64
+          - OS: darwin
+            ARCH: arm64
+          - OS: windows
+            ARCH: amd64
+            EXTENSION: .exe
+          - OS: windows
+            ARCH: 386
+            EXTENSION: .exe
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ inputs.GO_VERSION }}
+      - name: Build Application
+        run: |
+          GOOS=${{ matrix.OS }} GOARCH=${{ matrix.ARCH }} go build -o ${{ inputs.BINARY_NAME }}_${{ matrix.OS }}_${{ matrix.ARCH }}${{ matrix.EXTENSION }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: "${{ inputs.BINARY_NAME }}_${{ matrix.OS }}_${{ matrix.ARCH }}${{ matrix.EXTENSION }}"
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ inputs.GO_VERSION }}
+      - name: Test Application
+        run: |
+          go test -coverprofile=coverage.out ./...
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage
+          path: "coverage.out"
+
+  snyk-scan:
+    runs-on: ubuntu-latest
+    if: secrets.SNYK_KEY
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3ß
+
+  sonar-scan:
+    runs-on: ubuntu-latest
+    if: secrets.SONAR_KEY
+    needs:
+      - test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3ß
