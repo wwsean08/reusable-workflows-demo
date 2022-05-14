@@ -81,19 +81,9 @@ jobs:
           path: "coverage.out"
           retention-days: 1
 
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Test
-        run: |
-          echo ${{ secrets.SONAR_TOKEN }}
-          echo ${{ github.event.secrets.SONAR_TOKEN }}
   sonar-scan:
     runs-on: ubuntu-latest
-    if: github.event.secrets.SONAR_TOKEN != ''
+    if: secrets.SONAR_TOKEN != ''
     needs:
       - test
     steps:
