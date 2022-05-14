@@ -119,6 +119,11 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/*_test.go,**/vendor/**
+            -Dsonar.tests=.
+            -Dsonar.test.inclusions=**/*_test.go
+            -Dsonar.test.exclusions=**/vendor/**
             -Dsonar.go.coverage.reportPaths=${{ steps.download.outputs.download-path }}/coverage.out
             -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ inputs.SONAR_ORGANIZATION }}
