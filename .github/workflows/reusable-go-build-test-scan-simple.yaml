@@ -64,6 +64,8 @@ jobs:
           path: "${{ inputs.BINARY_NAME }}_${{ matrix.OS }}_${{ matrix.ARCH }}${{ matrix.EXTENSION }}"
   test:
     runs-on: ubuntu-latest
+    outputs:
+      have_sonar_secrets: ${{ steps.check-sonar-secret.outputs.have_sonar_token }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
