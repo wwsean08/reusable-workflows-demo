@@ -65,7 +65,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     outputs:
-      have_sonar_secrets: ${{ steps.check-sonar-secret.outputs.have_sonar_token }}
+      have_sonar_secrets: ${{ steps.check-sonar-secret.outputs.have_sonar_secrets }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
