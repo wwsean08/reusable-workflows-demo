@@ -84,7 +84,7 @@ jobs:
 
   sonar-scan:
     runs-on: ubuntu-latest
-    if: ${{ secrets.SONAR_TOKEN }} != ''
+    if: github.event.secrets.SONAR_TOKEN != ''
     needs:
       - test
     steps:
