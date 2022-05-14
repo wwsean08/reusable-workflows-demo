@@ -27,7 +27,6 @@ on:
       SONAR_TOKEN:
         required: false
         description: Access token for authenticating with SonarCloud
-    outputs:
 
 jobs:
   build:
